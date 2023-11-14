@@ -45,6 +45,5 @@ public class MeteoMain {
 
         // run the job
         System.exit(job.waitForCompletion(true) ? 0 : 1);
-
     }
 }

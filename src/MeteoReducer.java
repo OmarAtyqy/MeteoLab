@@ -1,7 +1,7 @@
 // This is the reducer class. It is used to aggregate the values of the same key.
-// The input data is a list of <key, value> pairs, where the key is a string containing the station id, region type and the date of the measurement, and the value is the temperature
-// The output data is a list of <key, value> pairs, where the key is a string containing the station id, region type and the date of the measurement
-// and the value is the average temperature, max, min, standard deviation and median of the temperature for that key.
+// The input data is a list of <key, value> pairs, where the key is a string in the form of region_type-year-month-day, and the value is the temperature
+// The output data is a list of <key, value> pairs, where the key is a string in the form of station_id-year-region_type
+// and the value is the average temperature, max, min, standard deviation and median for that day in that year across all the stations in that region type
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,11 +20,12 @@ public class MeteoReducer extends Reducer<Text, DoubleWritable, Text, Text> {
     public void reduce(Text key, Iterable<DoubleWritable> values, Context context) throws IOException,
             InterruptedException {
 
-        // get the region type, station id and year from the key
+        // get the region type, year, month, day
         String[] keyParts = key.toString().split("-");
         String regionType = keyParts[0];
-        String stationId = keyParts[1];
-        String year = keyParts[2];
+        String year = keyParts[1];
+        String month = keyParts[2];
+        String day = keyParts[3];
 
         // create a list to store the temperatures
         List<Double> temperatures = new ArrayList<>();
@@ -67,7 +68,7 @@ public class MeteoReducer extends Reducer<Text, DoubleWritable, Text, Text> {
 
         // create the key and value string
         String valueString = String.format("%.2f-%.2f-%.2f-%.2f-%.2f", average, max, min, standardDeviation, median);
-        String keyString = String.format("%s-%s-%s", stationId, year, regionType);
+        String keyString = String.format("%s-%s-%s-%s", regionType, year, month, day);
 
         // set the key and value
         word.set(keyString);
