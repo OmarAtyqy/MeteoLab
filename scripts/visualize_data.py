@@ -99,7 +99,12 @@ n_clusters = 2
 scores = {}
 for region_type, df in data.items():
 
-    # drop the ID and REGION_TYPE columns
+    # save the year, month and day from the dataframe
+    year = df["YEAR"]
+    month = df["MONTH"]
+    day = df["DAY"]
+
+    # drop the year, month and day from the dataframe
     df = df.drop(["MONTH", "REGION_TYPE", "YEAR", "DAY"], axis=1)
 
     # create a linkage matrix
@@ -110,6 +115,11 @@ for region_type, df in data.items():
 
     # add the labels to the dataframe
     df["CLUSTER"] = labels
+
+    # add the year, month and day back to the dataframe
+    df["YEAR"] = year
+    df["MONTH"] = month
+    df["DAY"] = day
 
     # save the dataframe to a csv file
     df.to_csv(f"data/clustered_data_{region_type}.csv", index=False)
