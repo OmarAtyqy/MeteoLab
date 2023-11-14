@@ -46,7 +46,7 @@ smoothing_window = st.sidebar.slider('Smoothing Window (Days)', 1, 365, 30)
 
 # Aggregation Selector
 aggregate_by = st.sidebar.selectbox(
-    'Aggregate Data By', ['None', 'Month', 'Year'])
+    'Aggregate Data By', ['Day', 'Month', 'Year'])
 
 # Filter data by selected year range
 filtered_data = data[(data['YEAR'] >= selected_years[0])
@@ -64,12 +64,12 @@ elif aggregate_by == 'Year':
 
 # Apply smoothing if the window is greater than 1
 if smoothing_window > 1:
-    for col in ['AVERAGE', 'MAX', 'MIN']:
+    for col in ['AVERAGE', 'MAX', 'MIN', "MEDIAN"]:
         filtered_data[col] = filtered_data[col].rolling(
             smoothing_window, min_periods=1).mean()
 
 # If data is aggregated by month or year, adjust the index for plotting
-if aggregate_by != 'None':
+if aggregate_by != 'Day':
     filtered_data['DATE'] = pd.to_datetime(filtered_data[['YEAR', 'MONTH']].fillna(
         1).astype(int).apply(lambda row: '-'.join(row.values.astype(str)), axis=1))
 else:
@@ -92,7 +92,8 @@ st.markdown(f"""
 
 # Time Series Plot
 st.subheader(f'Temperature Time Series for {region} Region')
-temp_type = st.selectbox('Select Temperature Type', ['AVERAGE', 'MAX', 'MIN'])
+temp_type = st.selectbox('Select Temperature Type', [
+                         'AVERAGE', 'MAX', 'MIN', "MEDIAN"])
 st.line_chart(filtered_data[['DATE', temp_type]].set_index('DATE'))
 
 st.markdown(f"""

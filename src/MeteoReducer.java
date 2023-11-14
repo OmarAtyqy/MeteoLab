@@ -1,6 +1,6 @@
 // This is the reducer class. It is used to aggregate the values of the same key.
 // The input data is a list of <key, value> pairs, where the key is a string in the form of region_type-year-month-day, and the value is the temperature
-// The output data is a list of <key, value> pairs, where the key is a string in the form of station_id-year-region_type
+// The output data is a list of <key, value> pairs, where the key is a string in the form of region_type-year-month-day
 // and the value is the average temperature, max, min, standard deviation and median for that day in that year across all the stations in that region type
 
 import java.io.IOException;
@@ -35,13 +35,9 @@ public class MeteoReducer extends Reducer<Text, DoubleWritable, Text, Text> {
             temperatures.add(value.get());
         }
 
-        // get the average of the temperatures
+        // get the average, max and min of the temperatures
         double average = temperatures.stream().mapToDouble(val -> val).average().orElse(0.0);
-
-        // get the maximum of the temperatures
         double max = temperatures.stream().mapToDouble(val -> val).max().orElse(0.0);
-
-        // get the minimum of the temperatures
         double min = temperatures.stream().mapToDouble(val -> val).min().orElse(0.0);
 
         // get the standard deviation of the temperatures
